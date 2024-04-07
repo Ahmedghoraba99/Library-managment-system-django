@@ -1,3 +1,5 @@
+from email import message
+from django.shortcuts import render, redirect
 from django.shortcuts import render
 from .models import Category
 from django.contrib.auth.decorators import login_required
@@ -17,36 +19,47 @@ def category_detail(request, category_id):
 
 
 # @login_required
+# def category_create(request):
+#     category = None
+#     if request.method == 'POST':
+#         form = CategoryForm(request.POST)
+#         if form.is_valid():
+#             category = form.save()
+#     return render(request, 'categories/categoryForm.html', {'form': CategoryForm(), 'main_title': 'Create Category', 'category': category})
+
+# @login_required
+
 def category_create(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data['name']
-            description = form.cleaned_data['description']
             category = form.save()
-        return render(request, 'categories/categoryForm.html', {'category': category})
-    return render(request, 'categories/categoryForm.html', {'form': CategoryForm(), 'main_title': 'Create Category'})
+            return render(request, 'categories/categoryForm.html', {'category': category, 'message': 'Category created successfully'})
+    else:
+        form = CategoryForm()  # Create a new form instance for GET requests
+    return render(request, 'categories/categoryForm.html', {'form': form, 'main_title': 'Create Category'})
 
 
-@login_required
 def category_update(request, category_id):
     category = Category.get_by_id(category_id)
     if not category:
-        return render(request, 'categories/category_not_found.html')
+        return render(request, 'categories/categoryForm.html', {'message': 'Category not found'})
+
+    # Pass instance of category to form
+    form = CategoryForm(instance=category)
+
     if request.method == 'POST':
-        # get the data from modelform
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        category.name = name
-        category.description = description
-        category.save()
-        return render(request, 'categories/category_updated.html', {'category': category})
-    return render(request, 'categories/category_update.html', {'category': category})
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return render(request, 'categories/categoryForm.html', {'category': category, 'message': 'Category updated successfully'})
+
+    return render(request, 'categories/category_update.html', {'form': form, 'category': category})
 
 
 @login_required
-def category_delete(request, category_id):
-    category = Category.get_by_id(category_id)
+def category_delete(request, id):
+    category = Category.get_by_id(id)
     if not category:
         return render(request, 'categories/all_categories.html', {'message': 'Category not found'})
     category.delete()
@@ -54,4 +67,4 @@ def category_delete(request, category_id):
         'categories': Category.get_all(),
         'message': 'Category deleted successfully'
     }
-    return render(request, 'categories/all_categories.html', context)
+    return render(request, 'categories/allCategories.html', context)

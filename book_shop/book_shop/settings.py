@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # app import
     'books.apps.BooksConfig',
+    'categories.apps.CategoriesConfig',
     'info.apps.InfoConfig',
 ]
 
@@ -43,7 +44,10 @@ ROOT_URLCONF = 'book_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            # adds a path to allow template loading
+            BASE_DIR.joinpath('templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

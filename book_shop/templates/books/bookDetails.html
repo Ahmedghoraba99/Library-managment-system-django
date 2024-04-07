@@ -1,0 +1,26 @@
+{% extends 'layouts/base.html' %} {% load static %}
+
+<!-- bootstrap table -->
+{%block title%} {{book.title}} {% endblock %} {% block mainTitle %} {{ title }}
+{%endblock %} {% block content %}
+<div class="card mx-auto" style="width: 25rem">
+  <img
+    class="card-img-top mx-auto"
+    style="width: 180px"
+    src="{{ book.imageURL }}"
+    alt="Card image cap"
+  />
+  <div class="card-body">
+    <h5 class="card-title">{{book.title}}</h5>
+    <p class="card-text">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint distinctio
+      dolorum ipsum minus est iste iusto, velit dolores ex error eius quibusdam
+      cupiditate, et minima hic unde fugit temporibus enim?
+    </p>
+    <p class="card-text">Author: {{book.author}}</p>
+    <p class="card-text">Price: {{book.price}}</p>
+    <p class="card-text">Pages: {{book.number_of_pages}}</p>
+    <a href="#" class="btn btn-success">Buy now</a>
+  </div>
+</div>
+{%endblock%}

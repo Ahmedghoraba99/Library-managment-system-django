@@ -2,8 +2,7 @@
 from django.shortcuts import render
 import json
 from django.http import HttpResponse
-from django.http import HttpRequest, HttpResponse
-
+from .forms import BooksForm
 from .models import Book
 
 # Create your views here.
@@ -38,24 +37,35 @@ def book_detail(request, book_id):
     return render(request, 'books/bookDetails.html', context)
 
 
-def book_create(request: HttpRequest):
+def book_create(request):
     if request.method == 'POST':
-        try:
-            # Get the form data
-            title = request.POST.get('title')
-            author = request.POST.get('author')
-            number_of_pages = request.POST.get('number_of_pages')
-            price = request.POST.get('price')
-            image = request.FILES.get('image') or None
-            book = Book(title=title, author=author,
-                        number_of_pages=number_of_pages, price=price, image=image)
-            book.save()
-            return render(request, 'books/addBook.html', {'success': f'Book {title} added successfully'})
-        except:
+        form = BooksForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return render(request, 'books/addBook.html', {'success': f'Book {form.cleaned_data["title"]} added successfully'})
+        else:
             return render(request, 'books/addBook.html', {'error': 'Please fill all the required fields', 'title': 'Add a new book'})
     else:
-        context = {'title': 'Add a new book'}
+        context = {'title': 'Add aa new book', 'form': BooksForm()}
         return render(request, 'books/addBook.html', context)
+# def book_create(request: HttpRequest):
+#     if request.method == 'POST':
+#         try:
+#             # Get the form data
+#             title = request.POST.get('title')
+#             author = request.POST.get('author')
+#             number_of_pages = request.POST.get('number_of_pages')
+#             price = request.POST.get('price')
+#             image = request.FILES.get('image') or None
+#             book = Book(title=title, author=author,
+#                         number_of_pages=number_of_pages, price=price, image=image)
+#             book.save()
+#             return render(request, 'books/addBook.html', {'success': f'Book {title} added successfully'})
+#         except:
+#             return render(request, 'books/addBook.html', {'error': 'Please fill all the required fields', 'title': 'Add a new book'})
+#     else:
+#         context = {'title': 'Add a new book'}
+#         return render(request, 'books/addBook.html', context)
 
 
 def book_edit(request, book_id):

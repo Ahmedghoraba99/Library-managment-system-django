@@ -1,7 +1,7 @@
 from django.db import models
-from django.shortcuts import reverse
-
-# Create your models here.
+# ignore err
+from django.urls import reverse
+from categories.models import Category
 
 
 class Book(models.Model):
@@ -11,6 +11,9 @@ class Book(models.Model):
     number_of_pages = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     image = models.ImageField(upload_to='images/books', null=True, blank=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, null=True, blank=True, related_name="allCategories")
+    # dear instructor, I know null=true is not right, but it's but for the old db
 
     def __str__(self):
         return self.title
